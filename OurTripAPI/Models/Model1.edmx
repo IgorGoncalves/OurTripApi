@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="OurtripModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="OurtripModelStoreContainer">
+    <EntitySet Name="User" EntityType="OurtripModel.Store.User" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="LocationSet" EntityType="OurtripModel.Store.LocationSet" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="sysdiagrams" EntityType="OurtripModel.Store.sysdiagrams" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="UserLocation" Association="OurtripModel.Store.UserLocation">
+      <End Role="User" EntitySet="User" />
+      <End Role="Location" EntitySet="LocationSet" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="User">
+    <Key>
+      <PropertyRef Name="us_id" />
+    </Key>
+    <Property Name="us_id" Type="int" Nullable="false" />
+    <Property Name="us_name" Type="varchar" Nullable="true" MaxLength="80" />
+    <Property Name="us_age" Type="int" Nullable="true" />
+    <Property Name="us_Bio" Type="varchar" Nullable="true" MaxLength="200" />
+    <Property Name="us_avatar" Type="varchar" Nullable="true" MaxLength="500" />
+  </EntityType>
+  <EntityType Name="LocationSet">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Point" Type="geography" Nullable="false" SRID="4326" />
+    <Property Name="Title" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="User_us_id" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="nvarchar" Nullable="false" MaxLength="128" />
+    <Property Name="principal_id" Type="int" Nullable="false" />
+    <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="version" Type="int" Nullable="true" />
+    <Property Name="definition" Type="varbinary(max)" Nullable="true" />
+  </EntityType>
+  <Association Name="UserLocation">
+    <End Role="User" Type="OurtripModel.Store.User" Multiplicity="1" />
+    <End Role="Location" Type="OurtripModel.Store.LocationSet" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="User">
+        <PropertyRef Name="us_id" />
+      </Principal>
+      <Dependent Role="Location">
+        <PropertyRef Name="User_us_id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="OurtripModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="us_id" />
+          </Key>
+          <Property Name="us_id" Type="Int32" Nullable="false" />
+          <Property Name="us_name" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+          <Property Name="us_age" Type="Int32" />
+          <Property Name="us_Bio" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="us_avatar" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Location" Relationship="OurtripModel.UserLocation" FromRole="User" ToRole="Location" />
+        </EntityType>
+        <EntityContainer Name="OurtripEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="User" EntityType="Self.User" />
+          <EntitySet Name="LocationSet" EntityType="OurtripModel.Location" />
+          <AssociationSet Name="UserLocation" Association="OurtripModel.UserLocation">
+            <End Role="User" EntitySet="User" />
+            <End Role="Location" EntitySet="LocationSet" />
+          </AssociationSet>
+          <EntitySet Name="sysdiagrams" EntityType="OurtripModel.sysdiagrams" />
+        </EntityContainer>
+        <EntityType Name="Location">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="User" Relationship="OurtripModel.UserLocation" FromRole="Location" ToRole="User" />
+          <Property Name="Point" Type="GeographyPoint" Nullable="false" />
+          <Property Name="Title" Type="String" Nullable="false" />
+        </EntityType>
+        <Association Name="UserLocation">
+          <End Type="OurtripModel.User" Role="User" Multiplicity="1" />
+          <End Type="OurtripModel.Location" Role="Location" Multiplicity="*" />
+        </Association>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="OurtripModelStoreContainer" CdmEntityContainer="OurtripEntities">
+    <EntitySetMapping Name="User">
+      <EntityTypeMapping TypeName="IsTypeOf(OurtripModel.User)">
+        <MappingFragment StoreEntitySet="User">
+          <ScalarProperty Name="us_id" ColumnName="us_id" />
+          <ScalarProperty Name="us_name" ColumnName="us_name" />
+          <ScalarProperty Name="us_age" ColumnName="us_age" />
+          <ScalarProperty Name="us_Bio" ColumnName="us_Bio" />
+          <ScalarProperty Name="us_avatar" ColumnName="us_avatar" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="LocationSet">
+      <EntityTypeMapping TypeName="IsTypeOf(OurtripModel.Location)">
+        <MappingFragment StoreEntitySet="LocationSet">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Point" ColumnName="Point" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="sysdiagrams">
+      <EntityTypeMapping TypeName="IsTypeOf(OurtripModel.sysdiagrams)">
+        <MappingFragment StoreEntitySet="sysdiagrams">
+          <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+          <ScalarProperty Name="version" ColumnName="version" />
+          <ScalarProperty Name="definition" ColumnName="definition" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <AssociationSetMapping Name="UserLocation" TypeName="OurtripModel.UserLocation" StoreEntitySet="LocationSet">
+      <EndProperty Name="User">
+        <ScalarProperty Name="us_id" ColumnName="User_us_id" />
+      </EndProperty>
+      <EndProperty Name="Location">
+        <ScalarProperty Name="Id" ColumnName="Id" />
+      </EndProperty>
+    </AssociationSetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="False" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
